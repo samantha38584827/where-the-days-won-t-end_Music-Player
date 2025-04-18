@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>where the days won't end_Music Player</title>
+    <style>
+        html, body {
+        scrollbar-width: none;        /* Firefox */
+        -ms-overflow-style: none;     /* IE 10+ */
+        overflow-y: auto;             /* 可滑動但不顯示滾輪 */
+        }
+
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar {
+        display: none;                /* Chrome, Safari, Edge */
+        }
+
+        body {
+        background: #e0e0e0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem;
+        color: #333;
+        }
+
+        .container {
+        display: flex;
+        flex-direction: row;
+        width: 90%;
+        max-width: 1200px;
+        gap: 2rem;
+        }
+
+        .cover {
+        width: 300px;
+        height: 300px;
+        border-radius: 30px;
+        background: #e0e0e0;
+        box-shadow:  20px 20px 60px #bebebe,
+                    -20px -20px 60px #ffffff;
+        overflow: hidden;
+        }
+
+        .cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        }
+
+        .song-list {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        max-height: 300px;
+        overflow-y: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        }
+        .song-list::-webkit-scrollbar {
+            display: none;               /* Chrome, Safari, Edge */
+        }
+
+        .song-list li {
+        list-style: none;
+        background: #e0e0e0;
+        padding: 1rem;
+        border-radius: 20px;
+        box-shadow: 8px 8px 16px #bebebe,
+                    -8px -8px 16px #ffffff;
+        cursor: pointer;
+        transition: 0.2s ease-in-out;
+        }
+
+        .song-list li.active {
+            background-color: #d1d1d1;
+            font-weight: bold;
+        }
+
+        .song-list li:hover {
+        box-shadow: inset 4px 4px 8px #bebebe,
+                    inset -4px -4px 8px #ffffff;
+        }
+
+        .lyrics {
+        margin-top: 2rem;
+        width: 90%;
+        max-width: 800px;
+        background: #e0e0e0;
+        padding: 2rem;
+        border-radius: 30px;
+        box-shadow: 8px 8px 16px #bebebe,
+                    -8px -8px 16px #ffffff;
+        white-space: pre-line;
+        
+        }
+    </style>
+</head>
+<body>
+   <h1>where the days won't end_Music Player</h1>
+   <div class="container">
+        <div class="cover">
+            <img id="cover-image" src="/CD_img/Back In That Summer.jpg" alt="Cover">
+        </div>
+        <ul class="song-list" id="song-list">
+            <!-- Songs will be populated here by JS -->
+        </ul>
+   </div>
+
+   <audio id="audio-player" controls style="margin-top: 2rem; width: 90%; max-width: 800px;">
+        <source id="audio-source" src="music/Master_track one back in that summer .wav" type="audio/wav">
+    Your browser does not support the audio element.
+    </audio>
+
+   <div class="lyrics">
+        <h2 id="song-title">Back In That Summer</h2>
+        <p id="song-lyrics">Loading lyrics...</p>
+   </div>
+
+   
+   <script>
+    const songs = [
+        {
+            title: "Back In That Summer",
+            lyrics: `I’ve been thinking bout that last summer
+                    \ncall me back when you can
+                    \nYou had me tangled in your charmsTalking ‘bout nothingBut now those times feel fragile,I'm trying not to try so hard
+                    \nCan we find the same old magic?Or is it lost, forever tragic?
+                    \nIn that summer when we were closeYou told me that it would stayYour heart feels so distantLike I'm here and you're not there
+                    \nWill you ever lemme know?Even just pretending?
+                    \nBack in that summer when we’re close,You told me that it would stayI'd rather have you here,Yet somehow, I can't heal.Oooohh oooh
+                    \nEvery minute you said that we’d make fine,But time has slipped through our hands.`,
+            cover: "CD_img/Back In That Summer.jpg",
+            audio:"music/Master_track one back in that summer .wav"
+        },
+        {
+        title: "Where The Days Won’t End",
+        lyrics: `On April 20th, we met each other
+                \nI woke up sad, but you held me closer
+                \nMaybe it was Shiraz; we weren’t sober
+                \nBut somehow it all felt like charm
+                
+                \nThe mark on my neck stayed like bruise
+                \nThe way you looked at me, it felt familiar
+                            
+                \nI remember I had tears in eyes
+                \nTelling you how I feared goodbyes
+                \nYou felt like marigolds in sway
+                \nDriving out the gloom
+
+                \nOh, we danced when we were together
+                \nThe scent still hangs on my sweater 
+                \nThat aroma on my wrists
+
+                \nIt’s the little things that make me feel
+
+                \nYeh oh yeh oh yeh oh yeh oh yeh oh yeh oh
+
+                \nYou and me, what could I want more?
+                \nWe found a place where the days won’t end
+                \nIn everything I keep, even more
+                \nWhat we have is all we need
+
+                \nYeh oh yeh oh yeh oh
+                \nYeh oh yeh oh yeh oh yeh oh
+
+                \nohhh ohh ohhh oh
+
+                \nOh ohh oh oh oh oh oh
+                `,
+        cover: "CD_img/Where The Days Won’t End.jpg",
+        audio:"music/Master_track two where the days wont end.wav"
+        },
+        {
+        title: "Sunscreen",
+        lyrics: `Maybe it’s the way  
+                \nI’m sitting close tonight  
+                \nThe way you held me  
+                \nAnd nothing feels the same  
+
+                \nCan’t you see,  
+                \nI’m starting to lose you  
+                \nI swear I can hear it in your eyes  
+
+                \nI love your smile and laugh  
+                \ngold bracelet and sunscreen  
+                \nI don’t wanna lose what we had before  
+                \nCome on through  
+                \nBut I can’t keep waiting by the door when you’re not around  
+
+                \nIt wasn’t loud  
+                \nBut I saw those dreams slipping away, ohh  
+                \nBehind me, drifting like smoke into the air  
+
+                \nAs time went on, this blue weight just settled in  
+
+                \nWondering if you’ll still think about those times  
+                \nHold me tighter  
+                \nAs we drift to the edge of recovery  
+
+                \nDreams of you  
+                \nTonight’s the time to cross that line  
+                \nTell me, babe, is this where we begin?  
+                \nI can see how soft you are just from your eyes  
+                \nWith you now, devotion’s starting to be yours
+                `,
+        cover: "CD_img/Sunscreen.jpg",
+        audio:"music/Master_track three sunscreen .wav"
+        },
+        {
+        title: "Road 55",
+        lyrics: `Sleepless night
+                \nYou called out from afar
+                \nWe wandered the same road on
+                \nRoad 55
+                \nI hear the word you said to me
+                \nSo I ran to your arms
+
+                \nI want us to stay
+                \nBut we had to go
+                \nI remember you telling me
+                \nNot to stay out too late
+                \nEvery word you left unsaid
+                \nKeeps spinning in my head
+
+                \nCold hand
+                \nWaiting for your text
+                \nWith every empty space, please don’t go
+                \nYour gentleness says more than words
+                \nAnd I hate those people who gather around
+
+                \nI want us to stay
+                \nBut we had to go
+                \nI remember you telling me
+                \nNot to stay out too late
+                \nEvery word you left unsaid
+                \nKeeps spinning in my head
+                \nOhhh
+
+                \nAmid the corners of the love we knew
+                \nBut this love we once held
+                \nWhispering softly of  what we knew
+                \nNo matter what, I still feel you
+
+                \nFalling softly, what’s it gonna be?
+                \nAt night, you keep appearing
+                \nEvery word you left unsaid
+                \nKeeps spinning in my head
+
+                \nKeeps spinning in my head
+
+                \nKeeps spinning in my head
+
+                \nFalling softly, what’s it gonna be?
+                \nOh
+                \nAt night, you keep appearing
+                \nEvery word you left unsaid
+                \nKeeps spinning in my head
+        `,
+        cover: "CD_img/road55.jpg",
+        audio:"music/Master_track four road 55 .wav"
+        },
+        {
+        title: "Cocoon",
+        lyrics: `Morning light creeps in
+                \nYour clothes are still around
+                \nBut something on my mind
+                \njust can’t settle down
+                \nBarefoot in your room
+                \nsprawled out on the floor
+                \nPicking up the pieces
+                \nI left behind
+
+                \nTossing around in my mind
+                \nDancing with you in my head
+
+                \nTake a walk at dawn
+                \nLollies in my hand
+                \nWrote a song about you
+                \nRemember what you said
+                \nSlipping on your shoe
+                \nThinking they’re gone
+                \nHow’d you feel back then
+                \nBefore we came undone?
+                \nYou still linger in my mind
+                \nBut I’ll be fine, I’ll be fine
+
+                \nMaking something new
+                \nCurled up in your arms
+                \nWanna be your girl
+                \nCocooned by your love
+                \nLetting it out of my chest
+                \nCarry all the flecks 
+                \nBack to where it began
+                \nI break through another day
+                \nYou still linger in my mind 
+                \nSinking on the hardwood floor
+                \nYou still linger in my mind
+                \nBut I’ll be fine, I’ll be fine
+                \nYou still linger in my mind
+                \nBut I’ll be fine, I’ll be fine
+
+                \nYou still linger in my mind
+                \n(Thinking they’re gone)
+                `,
+        cover: "CD_img/Cocoon.png",
+        audio:"music/Master_track five cocoon .wav"
+        },
+        {
+        title: "La La Love",
+        lyrics: `Hey,
+                \nI’ve been waiting for you to call.
+                \nI remember you in my forget-me-not tee.
+
+                \nDreaming of you,
+                \nDo you miss me? You’ve been on my mind.
+                \nIt’s been so long since I felt this way
+
+                \nOh Esme
+                \nDa la da la da la
+                \nDa la da la da la
+                \nDa la da la da la
+                \nDa la da la da la
+
+                \nI keep going back to those days,
+                \nJust need you to hear this song.
+
+                \nCause I miss you so bad, 
+                \nand I’m standing right here in front of you.
+
+                \nDreaming of you
+
+                \nI’ve been in love,in love 
+                \nI’ve been in love,in love 
+                \nI’ve been in love ,in love 
+                \nI’ve been in love ,in love 
+                \nI’ve been in love,in love
+                `,
+        cover: "CD_img/La La Love.jpg",
+        audio:"music/Master_track six la la love .wav"
+        },
+        {
+        title: "Half Asleep",
+        lyrics: `She sent me a couple of texts at 2 AM
+                \nIf I wrote them all down, would it ease the pain?
+                \nI’m sinking deep into my pillow, but why?
+                \nIt’s just not the same without our talks at night
+                \nI miss our little talks at night, I miss…
+                \n1
+                \n2
+                \n3
+                \n4
+
+                \nI play it cool like I don’t even care
+                \n“My phone’s dead, but I still can’t sleep anyway.”
+                \nMy life’s been slowly slipping off track
+                \nStill trying to figure it all out. Yeh
+
+                \nIt always feels like you’re just out of my reach
+                \nThe only way to get back to my life
+                \nIs to keep my emotions locked away
+                \nBut I don’t know if these feelings are right.yeh
+
+                \nWhy can’t my mind just take things slow?
+                \nWhy does this room feel emptier than it is?
+                \nWhy is my mind saying things I can’t say,
+                \nTrapped in thoughts I don’t even understand?
+
+                \nNever thought I’d feel this way
+                \nSpinning, running
+                \nI don’t know where it’s all going wrong
+                \nI try and try…
+
+                \nWhy can’t my mind just take things slow?
+                \nWhy does this room feel emptier than it is?
+                \nWhy is my mind saying things I can’t say
+                \nTrapped in thoughts I don’t even understand?
+
+                \nWhy can’t my mind just take things slow?
+                \nWhy does this room feel emptier than it is?
+                \nWhy is my mind saying things I can’t say
+                `,
+        cover: "CD_img/Half Asleep.jpg",
+        audio:"music/Master_track seven half asleep .wav"
+        },
+        {
+        title: "Candy Wraps",
+        lyrics: `Postcards on the floor, who are you even writing to?
+                \nI spilled my drink on your skin, your cami’s still under my bed.
+                \nAnd it’s homey and fuzzy , 
+                \nWith jasmine scents around.
+                \nAnd your head’s on my chest, your clothes are on me
+                \nWhen you and I get to worry, we just brush it off again.
+                \nCandy wraps in my pocket,
+                \nI haven’t tossed it away.
+                \nWatching you sleep feels like sorrow falling.
+                \nThey said time would heal, but I can’t feel its peace.
+                \nWorn-out sheets, and I’m too weary,
+                \nWe all pretend it never ends.
+                \nOhh,
+                \nOhhh,
+                \nOh oh,
+                \nWhen you and I get to worry, maybe I’ll dance with you again.
+                \nWhen you and I get to worry, maybe I’ll dance with you again.
+                `,
+        cover: "CD_img/Candy Wraps.jpg",
+        audio:"music/Master_track eight candy wraps .wav"
+        },
+        {
+        title: "She Shimmers",
+        lyrics: `She shimmers like a spark
+                \nWith her off-white striped top (da la da la da la da la da)
+                \nYou asked me,”why don’t you ever look me in the eye?”
+
+                \nShe has her necklace tied together 
+                \nendless like you & me forever 
+
+                \nShe shimmers in the night, 
+                \nShe shimmers in the night, oh
+                \nShe shimmers in the night
+                \n(She shimmers in the night)
+
+                \nI wanna be the one you hold
+                \nAnd run to you like a little kid
+                \nI still remember when I first knew
+                \nWhen I fell in love way back then 
+
+                \nWe shimmer in the night oh yeah 
+
+                \nWe shimmer in the night
+
+                \nWe shimmer in the night oh yeah
+
+                \nShe shimmers in the night
+
+                \nShe shimmers in the night
+                `,
+        cover: "CD_img/She Shimmers.jpg",
+        audio:"music/Master_track nine she shimmers .wav"
+        },
+        {
+        title: "Cud Me",
+        lyrics: `Cud me on the calm nights?
+                \nCall me when you’re alone?
+
+                \nCud me on the hushed night?
+                \nCall me softly, but do you hold me?
+
+                \nCud me on the dim-lit night?
+                \nCoax me sweet in love.
+
+                \nCud me on the misty night?
+                \nCall me slowly, but can you love me?
+
+                \nYou save me, I’m waiting…
+                \nAnd you feel me and heal me…
+
+                \nYou save me, I’m waiting…
+
+                \nYou save me, I’m waiting…
+
+                \n(That I know, that I know, and I’m dreamin’ by your door, it’s the way that I know)
+
+                \nCud me when the lights are low?
+                \nCall me when you’re home.
+
+                \nCud me when the TV’s off?
+                \nCall me nightly, but can you keep me?
+
+                \nCud me on the hazy light,
+                \nHold me in your arms.
+
+                \nCud me when the curtains fall?
+                \nCall me, maybe, say something…
+
+                \nYou save me, I’m waiting…
+                \nAnd you feel me and heal me…
+
+                \nYou save me, I’m waiting…
+                \n(That I know, that I know, and I’m dreamin’ by your door, it’s the way that I know)
+
+                \nYou save me, I’m waiting…
+
+                \nCall 
+                \nCall me again now
+                \nCall
+                \nCall me again now
+                \nCall
+                \nCall me again now
+                \nCall me again
+                `,
+        cover: "CD_img/cud me.jpg",
+        audio:"music/Master_cud me.wav"
+        },
+        {
+        title: "4:05",
+        lyrics: `You’ve been off for way too long
+                \nCaught up in things you won’t explain
+                \nCan’t sleep, it’s 4 : 05
+                \nFeels like I’m losing you again
+                    
+                \nIs it alright to feel this way?
+                \nHoping you would feel the same
+
+                \nWould you stay and light the way?
+                \nEvery moment that we had
+
+                \nLate night talks and sleepless night
+                \nWondering if it’s what it seems
+                \nEvery word that you might say
+                \nMakes me wish you would never stray
+
+                \nIs it alright to feel this way?
+                \nHoping you would feel the same
+
+                \nWould you stay and light the way?
+                \nEvery moment that we had
+                \nOhh oh
+
+                \nCalling in the middle of loves flame
+                \nHoping won’t drift away yeah
+                \nIs it alright to feel this way 
+                \nHoping you would feel the same 
+                \nWould you stay and light the way
+                \nEvery moment that we had
+                `,
+        cover: "CD_img/405.jpg",
+        audio:"music/Master_track eleven 405.wav"
+        },
+        {
+        title: "June 3rd ,My Dear",
+        lyrics: `June sunlight hits my skin,
+                \nLike a kiss from days gone by.
+
+                \nI wish I could still sit on the bench with you,
+                \nLaughing about nothing.
+
+                \nYou leaned in close and whispered,
+                \nAt around 11, close, my dear.
+
+                \nDo you remember it all now?
+                \nBack then, it felt like sand in an hourglass.
+
+                \nAnd I think about all we could’ve been,
+                \nWhile you’re somewhere far away 
+
+                \nAs I picture us slowly passing by,
+                \nShimmering in June.
+
+                \nIt’s so hard to forget this,
+                \nBut I can still feel your touch through my hair, babe.
+
+                \nWe were meant to live all of this ,
+                \nWhile my heart still aches for you,
+                \nAnd that’s why I’m here with you.
+                \nooh.
+                `,
+        cover: "CD_img/June 3rd,My Dear.jpg",
+        audio: "music/Master_track twelve june 3rd my dear.wav"
+        },
+    ];
+
+    const listElement = document.getElementById('song-list');
+    const titleElement = document.getElementById('song-title');
+    const lyricsElement = document.getElementById('song-lyrics');
+    const coverElement = document.getElementById('cover-image');
+    const audioPlayer = document.getElementById("audio-player");
+
+
+    songs.forEach((song, index) => {
+      const li = document.createElement('li');
+      li.textContent = song.title;
+      li.onclick = () => {
+        titleElement.textContent = song.title;
+        lyricsElement.textContent = song.lyrics;
+        coverElement.src = song.cover;
+        playSong(index);
+      };
+      listElement.appendChild(li);
+    });
+
+    // 初始化第一首歌
+    titleElement.textContent = songs[0].title;
+    lyricsElement.textContent = songs[0].lyrics;
+    coverElement.src = songs[0].cover;
+    audioPlayer.src = songs[0].audio;
+
+    function playSong(index) {
+        const song = songs[index];
+        titleElement.textContent = song.title;
+        lyricsElement.textContent = song.lyrics;
+        coverElement.src = song.cover;
+        audioPlayer.src = song.audio;
+        audioPlayer.style.display = "block";
+        audioPlayer.play();
+    }
+
+    let currentSongLi;
+    li.onclick = () => {
+        if (currentSongLi) currentSongLi.classList.remove('active');
+        li.classList.add('active');
+        currentSongLi = li;
+
+        titleElement.textContent = song.title;
+        lyricsElement.textContent = song.lyrics;
+        coverElement.src = song.cover;
+        playSong(index);
+    };
+
+   </script>
+</body>
+</html>
